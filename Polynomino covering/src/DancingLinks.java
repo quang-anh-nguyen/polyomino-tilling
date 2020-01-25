@@ -61,37 +61,7 @@ public class DancingLinks<E> extends ExactCover<E> {
 
 	public static LinkedList reference;
 
-//	public Set<E> getSet(dataObj data) {
-//		dataObj cur = data;
-//		Set<E> set = new HashSet<E>();
-//		while (true) {
-//			set.add((E) cur.C.N);
-//			cur = cur.R;
-//			if (cur.equals(data))
-//				break;
-//		}
-//		return set;
-//	}
-//
-//	public Set<Set<E>> getSol(Set<dataObj> sol) {
-//		Set<Set<E>> set = new HashSet<Set<E>>();
-//		for (dataObj s : sol) {
-//			set.add(getSet(s));
-//		}
-//		return set;
-//	}
-//	
-//	public Set<Set<Set<E>>> getSolution() {
-//		Set<Set<Set<E>>> list = new HashSet<Set<Set<E>>>();
-//		for (Set<dataObj> sol : solution) {
-//			list.add(getSol(sol));
-//		}
-//		return list;
-//	}
-
 	public DancingLinks() {
-//		this.h = h;
-//		this.getSet = getSet;
 	}
 
 	public DancingLinks(LinkedList<E> groundSet, LinkedList<Set<E>> collection) {
@@ -191,8 +161,9 @@ public class DancingLinks<E> extends ExactCover<E> {
 				P.add(t);
 				solution.add(P);
 			}
-			if (solution.size() >= 10)
-				break;
+////		add this to code to limit the cases for big tests 
+//			if (solution.size() >= 10)
+//				break;
 			for (dataObj y = t.R; !y.equals(t); y = y.R)
 				uncoverColumn(y.C);
 		}

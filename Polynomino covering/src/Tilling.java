@@ -154,7 +154,7 @@ public class Tilling extends ExactCover {
 				Ps.add(ppp);
 			}
 			c++;
-			Test.draw(Ps, "ABC/" + which + "_" + Integer.toString(c) + ".png");
+			Test.draw(Ps, "begin_tilling/" + which + "_" + Integer.toString(c) + ".png");
 		}
 
 	}
@@ -212,8 +212,8 @@ public class Tilling extends ExactCover {
 
 	public static void test2() {
 		int n = 5;
-		int width = 3;
-		int height = 20;
+		int width = 4;
+		int height = 15;
 		PolyNode.N = n;
 		Test.N = n;
 		Test.size = 50;
@@ -236,27 +236,27 @@ public class Tilling extends ExactCover {
 		long executionTime = endTime - startTime;
 		System.out.println("Execution time = " + executionTime + "ms");
 
-//		int c = 0;
-//		for (Set<dataObj> sol : dcl.solution) {
-//			LinkedList<Polyomino> Ps = new LinkedList<Polyomino>();
-//			Ps.add(P);
-//			for (dataObj o : sol) {
-//				dataObj cur = o;
-//				Polyomino ppp = new Polyomino();
-//				while (true) {
-//					if (cur.C.N instanceof Square) {
-//						ppp = ppp.addSquare((Square) cur.C.N);
-//					}
-//					cur = cur.R;
-//					if (cur.equals(o))
-//						break;
-//				}
-//				Ps.add(ppp);
-//			}
-//			c++;
-//			Test.draw(Ps, "DEF/" + Integer.toString(width) + "_" + Integer.toString(height) + "_" + Integer.toString(c)
-//					+ ".png");
-//		}
+		int c = 0;
+		for (Set<dataObj> sol : dcl.solution) {
+			LinkedList<Polyomino> Ps = new LinkedList<Polyomino>();
+			Ps.add(P);
+			for (dataObj o : sol) {
+				dataObj cur = o;
+				Polyomino ppp = new Polyomino();
+				while (true) {
+					if (cur.C.N instanceof Square) {
+						ppp = ppp.addSquare((Square) cur.C.N);
+					}
+					cur = cur.R;
+					if (cur.equals(o))
+						break;
+				}
+				Ps.add(ppp);
+			}
+			c++;
+			Test.draw(Ps, "rectangle_tilling/" + Integer.toString(width) + "_" + Integer.toString(height) + "_" + Integer.toString(c)
+					+ ".png");
+		}
 	}
 
 	public static boolean dilateTilling(Polyomino P, int k) {
@@ -285,7 +285,7 @@ public class Tilling extends ExactCover {
 				}
 				Ps.add(ppp);
 			}
-			Test.draw(Ps, "(" + P.getNum() + "," + k + ")" + "_" + P.toString() + ".png");
+			Test.draw(Ps, "self_dilate_tilling/(" + P.getNum() + "," + k + ")" + "_" + P.toString() + ".png");
 			break;
 		}
 		if (dcl.solution.isEmpty())
@@ -316,8 +316,9 @@ public class Tilling extends ExactCover {
 
 	public static void main(String[] args) {
 //		test1(1);
+//		test1(2);
+//		test1(3);
 //		test2();
-		test3(8, 4);
-//		test();
+//		test3(8, 4);
 	}
 }

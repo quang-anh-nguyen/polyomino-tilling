@@ -13,9 +13,9 @@ enum Lattice {
 class PolyCubeTest {
 
 	static int N = PolyCube.N;
-	static int size = 100;
-	static int line = 5;
-	static Dimension screen = new Dimension(1920, 1080);
+	static int size = 5;
+	static int line = 1;
+	static Dimension screen = new Dimension(2400, 1800);
 	public static Color[] color = { Color.white, Color.red, Color.green, Color.blue, Color.yellow, Color.cyan,
 			Color.magenta, Color.orange, Color.gray, Color.pink, Color.darkGray, Color.lightGray };
 
@@ -30,33 +30,34 @@ class PolyCubeTest {
 		if (length > 50000)
 			size = 10;
 		int nx, ny;
-		if (size * length * (N) < screen.width)
-			screen = new Dimension(size * length * (N), size * (N + 2));
-		nx = screen.width / (size * (N));
+		if (size * length * (N + 2) < screen.width)
+			screen = new Dimension(size * length * (N + 2), size * (N + 2));
+		nx = screen.width / (size * (N + 2));
 		ny = (int) Math.ceil((length + 0.0) / nx);
-		screen = new Dimension(nx * size * (N), ny * size * (N));
+		screen = new Dimension(nx * size * (N + 2), ny * size * (N + 2));
 	}
 
 	public static void draw(LinkedList<PolyCube> polys, String filename, boolean real) {
 		int c = 1;
-		int left = (N) * size / 2;
-		int floor = (N) * size / 2;
+		int left = (N + 2) * size / 2;
+		int floor = (N + 2) * size / 2;
 		if (real) {
 			floor = -YMIN;
 			left = -XMIN;
 			screen.width = XMAX - XMIN + 1;
 			screen.height = YMAX - YMIN + 1;
-		}
+		} else
+			getDimension(polys.size());
 		Image2d img = new Image2d(screen.width, screen.height);
 		for (PolyCube P : polys) {
 			P.addToImage(img, line, size, color[c], real, left, floor);
 			c++;
 			c = c % color.length;
 			if (!real) {
-				left += (N) * size;
+				left += (N + 2) * size;
 				if (left > PolyCubeTest.screen.width - size) {
-					left = (N) * size / 2;
-					floor += (N) * size;
+					left = (N + 2) * size / 2;
+					floor += (N + 2) * size;
 				}
 			}
 		}
@@ -169,8 +170,6 @@ abstract class Cell {
 	public abstract LinkedList<Cell> neighbors();
 
 	public abstract int distance(Cell c);
-
-//	public abstract LinkedList<? extends Cell> getCells();
 
 	public abstract Cell transfrom(int i, int j, int k);
 
@@ -409,7 +408,7 @@ class Triangle extends Cell {
 	int[][] getGeometry(int left, int floor, int size) {
 		int[][] geo = new int[2][3];
 		double alpha = Math.toRadians(120);
-		double r = size / 2.;
+		double r = size / 1.5;
 		double Y = (x - z) * Math.sqrt(3) / 2;
 		double X = (x / 2. - y + z / 2.);
 		for (int i = 0; i < 3; i++) {
@@ -723,7 +722,7 @@ public class PolyCube {
 		return new PolyCube(cbs);
 	}
 
-	public static LinkedList<PolyCube> listN = new LinkedList<PolyCube>();
+	public static LinkedList<PolyCube> listN;
 
 	public static Lattice lattice;
 
@@ -767,6 +766,7 @@ public class PolyCube {
 	public static int N;
 
 	public static void generateFixed() {
+		listN = new LinkedList<PolyCube>();
 		root = new PolyCube();
 		listN.add(root);
 		while (listN.getFirst().n < N) {
@@ -936,30 +936,51 @@ public class PolyCube {
 	public static void test2() {
 		lattice = Lattice.TRIANGLE;
 
-//		N = 7;
-//		PolyCube P = new PolyCube("[(0,0,0)]");
+		N = 10;
+		System.out.println("Lattice = " + lattice);
+		System.out.println("Number of cells = " + N);
+		PolyCube P = new PolyCube("[(0,0,0)]");
+		
 //		generateFixed();
-//		System.out.println(listN.size());
+//		System.out.println("Number of fixed polyominoes = " + listN.size());
+//		endTime = System.currentTimeMillis();
+//		PolyCubeTest.draw(listN, "triangular_animals/" + N + "_fixed" + ".png", false);
 
-		PolyCube P = new PolyCube("[(0,0,0),(0,0,1),(-1,0,1)]");
-		LinkedList<PolyCube> list = new LinkedList<PolyCube>();
-		list.add(P);
-		PolyCubeTest.frame(P);
-		PolyCubeTest.draw(list, "hohoho.png", true);
+//		listN = null;
+//		generateFree(true, false);
+//		PolyCubeTest.draw(listN, "triangular_animals/" + N + "_oneside" + ".png", false);
+//		endTime = System.currentTimeMillis();
+//		System.out.println("Number of oneside polyominoes = " + listN.size());
+
+//		listN = null;
+//		generateFree(true, true);
+//		PolyCubeTest.draw(listN, "triangular_animals/" + N + "_free" + ".png", false);
+//		endTime = System.currentTimeMillis();
+//		System.out.println("Number of free polyominoes = " + listN.size());
 	}
 
 	public static void test3() {
 		lattice = Lattice.HEXAGON;
 
-//		N = 9;
+		N = 5;
+		System.out.println("Lattice = " + lattice);
+		System.out.println("Number of cells = " + N);
+		PolyCube P = new PolyCube("[(0,0,0)]");
+		
 //		generateFixed();
-//		System.out.println(listN.size());
+//		System.out.println("Number of fixed polyominoes = " + listN.size());
+//		endTime = System.currentTimeMillis();
+//		PolyCubeTest.draw(listN, "hexagonal_animals/" + N + "_fixed" + ".png", false);
 
-		N = 3;
-		generateFixed();
-		PolyCubeTest.getDimension(listN.size());
-		PolyCubeTest.draw(listN, "hahaha.png", false);
-		System.out.println(listN.size());
+		generateFree(true, false);
+		PolyCubeTest.draw(listN, "hexagonal_animals/" + N + "_oneside" + ".png", false);
+		endTime = System.currentTimeMillis();
+		System.out.println("Number of oneside polyominoes = " + listN.size());
+
+//		generateFree(true, true);
+//		PolyCubeTest.draw(listN, "hexagonal_animals/" + N + "_free" + ".png", false);
+//		endTime = System.currentTimeMillis();
+//		System.out.println("Number of free polyominoes = " + listN.size());
 	}
 
 	public static void test4() {
@@ -1074,14 +1095,14 @@ public class PolyCube {
 	public static long startTime, endTime, executionTime;
 
 	public static void main(String[] args) {
+		startTime = System.currentTimeMillis();
 //		------------------------------------------------------------------
 //		test1(); // OK
 //		test2();
-//		test3();
+		test3();
 //		test4();
-		test5();
+//		test5();
 //		test();
-		System.out.println(lattice);
 //		------------------------------------------------------------------
 		executionTime = endTime - startTime;
 		System.out.println("Execution time = " + executionTime + " ms");

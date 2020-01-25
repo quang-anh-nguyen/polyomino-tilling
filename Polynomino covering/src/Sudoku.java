@@ -68,6 +68,7 @@ public class Sudoku {
 	LinkedList<int[][]> solution = new LinkedList<int[][]>();
 
 	public Sudoku(int[][] question) {
+		if (question.length != 81) throw new IllegalArgumentException("Input value not compatible!")
 		this.question = question;
 	}
 

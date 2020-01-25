@@ -4,7 +4,7 @@ import java.util.LinkedList;
 
 public class Test {
 
-	static int n;
+	static int N;
 	static long executionTime;
 	static int size = 20;
 	static Dimension screen = new Dimension(1920, 1080);
@@ -18,14 +18,14 @@ public class Test {
 		if (length > 50000)
 			size = 5;
 		int nx, ny;
-		if (size * length * (n + 2) < screen.width)
-			screen = new Dimension(size * length * (n + 2), size * (n + 2));
-		nx = screen.width / (size * (n + 2));
-		ny = (int) Math.ceil((size * length * (n + 2) + 0.0) / (screen.width));
-		if (ny * size * (n + 2) < screen.height)
-			screen = new Dimension(nx * size * (n + 2), ny * size * (n + 2));
+		if (size * length * (N + 2) < screen.width)
+			screen = new Dimension(size * length * (N + 2), size * (N + 2));
+		nx = screen.width / (size * (N + 2));
+		ny = (int) Math.ceil((size * length * (N + 2) + 0.0) / (screen.width));
+		if (ny * size * (N + 2) < screen.height)
+			screen = new Dimension(nx * size * (N + 2), ny * size * (N + 2));
 		else
-			screen = new Dimension(nx * size * (n + 2), ny * size * (n + 2));
+			screen = new Dimension(nx * size * (N + 2), ny * size * (N + 2));
 	}
 
 	public static void draw(LinkedList<Polyomino> polys, String filename) {
@@ -54,9 +54,9 @@ public class Test {
 		int c = 0;
 		for (Polyomino P : polys) {
 			P.addToShow(img, 2, size, offsetX, offsetY, Color.red);
-			offsetX += size * (n + 2);
-			if (offsetX > width - 0 * (n + 2) * size) {
-				offsetY += size * (n + 2);
+			offsetX += size * (N + 2);
+			if (offsetX > width - 0 * (N + 2) * size) {
+				offsetY += size * (N + 2);
 				offsetX = size;
 			}
 			c++;
@@ -73,15 +73,15 @@ public class Test {
 	}
 
 	public static void test2() {
-//		String filename = "Naive_" + Integer.toString(n) + "_fixed" + ".png";
-		String filename = "Naive_" + Integer.toString(n) + "_free" + ".png";
+//		String filename = "Naive_" + Integer.toString(N) + "_fixed" + ".png";
+		String filename = "Naive_" + Integer.toString(N) + "_free" + ".png";
 
 		long startTime = System.currentTimeMillis();
 
 //		STARTING PROGRAM ---------------------------------------------------------------------------
 
-//		LinkedList<Polyomino> list = Polyomino.generateFixed(n);
-		LinkedList<Polyomino> list = Polyomino.generateFree(n);
+//		LinkedList<Polyomino> list = Polyomino.generateFixedNaive(N);
+		LinkedList<Polyomino> list = Polyomino.generateFreeNaive(N);
 
 //		ENDING PROGRAM ---------------------------------------------------------------------------
 
@@ -105,7 +105,7 @@ public class Test {
 		long startTime = System.currentTimeMillis();
 
 //		STARTING PROGRAM ---------------------------------------------------------------------------
-		PolyNode.n = n;
+		PolyNode.N = N;
 
 //		LinkedList<Polyomino> list = PolyNode.generateFixed();
 		LinkedList<Polyomino> list = PolyNode.generateFree();
@@ -125,8 +125,8 @@ public class Test {
 	}
 
 	public static void main(String[] args) {
-		n = 9;
-		System.out.println("Number of cells = " + n);
+		N = 9;
+		System.out.println("Number of cells = " + N);
 //		test1();  	//YES
 //		test2();	//YES
 		test3();	//YES

@@ -1,39 +1,29 @@
 import java.util.LinkedList;
 
-//  This class serves as enumeration of fixed polyominos
+//  This class serves as enumeration of fixed polyominoes using the algorithm of Redelmeier
 
-public class PolyNode {
+public class PolyNode extends Polyomino {
 
 	static PolyNode tree; // storing all considered configurations of fixed polys
-	static int n;
+	static int N;
 
-	public Polyomino data;
 	public LinkedList<PolyNode> children;
-//	public PolyNode parent;
 
 	public PolyNode() {
-		this.data = new Polyomino();
+		super();
 		this.children = new LinkedList<PolyNode>();
-//		this.parent = null;
 		this.untried = (new Polyomino("[(0,0)]")).squares;
 		this.added = new LinkedList<Square>();
 	}
 
-	public PolyNode(Polyomino data) {
-		this.data = data;
-		this.children = new LinkedList<PolyNode>();
-//		this.parent = null;
-		this.untried = new LinkedList<Square>();
-		this.added = new LinkedList<Square>();
-	}
-
-	public void setData(Polyomino data) {
-		this.data = data;
-	}
-
-	public Polyomino getData() {
-		return this.data;
-	}
+//	public PolyNode(Polyomino data) {
+//		t
+//		this.data = data;
+//		this.children = new LinkedList<PolyNode>();
+////		this.parent = null;
+//		this.untried = new LinkedList<Square>();
+//		this.added = new LinkedList<Square>();
+//	}
 
 //	public PolyNode getParent() {
 //		return this.parent;
@@ -43,12 +33,7 @@ public class PolyNode {
 //		this.parent = parent;
 //	}
 
-	public LinkedList<PolyNode> getChildren() {
-		return this.children;
-	}
-
 	public void addChild(PolyNode child) {
-//		child.setParent(this);
 		this.children.add(child);
 	}
 
@@ -66,7 +51,7 @@ public class PolyNode {
 			return false;
 		if ((s.x <= 0) && (s.y == 0))
 			return false;
-		if (this.data.contains(s))
+		if (this.contains(s))
 			return false;
 		if (s.inList(this.untried) >= 0)
 			return false;
@@ -76,20 +61,38 @@ public class PolyNode {
 	public LinkedList<Square> untried;
 	public LinkedList<Square> added;
 
-	public static LinkedList<PolyNode> DEV = new LinkedList<PolyNode>();
+	public static LinkedList<PolyNode> listN = new LinkedList<PolyNode>();
+
+	@Override
+	public PolyNode addSquare(Square sq) {
+		if (this.contains(sq))
+			return this;
+		LinkedList<Square> squares = new LinkedList<Square>();
+		squares.addAll(this.squares);
+		squares.add(sq);
+		return new PolyNode(squares);
+	}
+
+	public PolyNode(LinkedList<Square> squares) {
+		super(squares);
+		this.children = new LinkedList<PolyNode>();
+		this.untried = new LinkedList<Square>();
+		this.added = new LinkedList<Square>();
+
+	}
 
 	public static void devBranching() {
 		tree = new PolyNode();
-		DEV.add(tree);
-		while ((DEV.getFirst().data.getNum() < n)) {
-			PolyNode parent = DEV.pop();
+		listN.add(tree);
+		while ((listN.getFirst().n < N)) {
+			PolyNode parent = listN.pop();
 			while (!parent.untried.isEmpty()) {
 				Square cell = parent.untried.pop();
 				parent.added.add(cell);
-				PolyNode child = new PolyNode(parent.data.addSquare(cell));
+				PolyNode child = parent.addSquare(cell);
 				parent.addChild(child);
-				DEV.addLast(child);
-				if (child.data.getNum() < n) {
+				listN.addLast(child);
+				if (child.n < N) {
 					LinkedList<Square> u = cell.neighbors();
 					child.untried.addAll(parent.untried);
 					child.added.addAll(parent.added);
@@ -105,43 +108,21 @@ public class PolyNode {
 
 	// get leaves - biggest polyominos generated
 
-	public LinkedList<PolyNode> extractLeaves() {
-		LinkedList<PolyNode> list = new LinkedList<PolyNode>();
-		if (this.data.getNum() == n) {
-			list.add(this);
-			return list;
-		}
-		for (PolyNode pn : this.getChildren()) {
-			list.addAll(pn.extractLeaves());
-		}
-		return list;
-	}
-
-// 	extraction
-
-	public static LinkedList<Polyomino> extractPolys(LinkedList<PolyNode> nodes) {
-		LinkedList<Polyomino> list = new LinkedList<Polyomino>();
-		for (PolyNode leave : nodes)
-			list.add(leave.data);
-		return list;
-	}
-
-	public static LinkedList<Polyomino> generateFixed() {
+	public static LinkedList<PolyNode> generateFixed() {
 		tree = new PolyNode();
 		devBranching();
 		tree = new PolyNode();
-//		return extractPolys(tree.extractLeaves())
-		return extractPolys(DEV);
+		return listN;
 	}
 
 	public PolyNode goDownTree(Polyomino P) {
 		P = P.translation(-P.base.x, -P.base.y);
-		if (P.getNum() == this.data.getNum())
+		if (P.getNum() == this.n)
 			return this;
 		LinkedList<Square> list = new LinkedList<Square>();
 		list.addAll(P.squares);
-		for (PolyNode child : this.getChildren()) {
-			Square s = child.data.squares.getLast();
+		for (PolyNode child : this.children) {
+			Square s = child.squares.getLast();
 			int k = s.inList(list);
 			if (k >= 0) {
 				list.remove(k);
@@ -151,38 +132,38 @@ public class PolyNode {
 		return null;
 	}
 
-	public static LinkedList<Polyomino> generateOneSide() {
+	public static LinkedList<PolyNode> generateOneSide() {
 		tree = new PolyNode();
 		devBranching();
 		int i = 0;
-		while (i < DEV.size()) {
-			LinkedList<Polyomino> variants = DEV.get(i).data.variants(false);
+		while (i < listN.size()) {
+			LinkedList<Polyomino> variants = listN.get(i).variants(false);
 			variants.pop();
 			while (!variants.isEmpty()) {
 				Polyomino v = variants.pop();
 				PolyNode b = tree.goDownTree(v);
-				DEV.remove(b);
+				listN.remove(b);
 
 			}
 			i++;
 		}
-		return extractPolys(DEV);
+		return (listN);
 	}
 
 	public static LinkedList<Polyomino> generateFree() {
 		tree = new PolyNode();
 		devBranching();
 		LinkedList<Polyomino> list = new LinkedList<Polyomino>();
-		while (!DEV.isEmpty()) {
-			Polyomino P = DEV.pop().data;
+		while (!listN.isEmpty()) {
+			Polyomino P = listN.pop();
 			LinkedList<Polyomino> variants = P.variants(true);
 			list.add(P);
 			variants.pop();
 			while (!variants.isEmpty()) {
 				Polyomino v = variants.pop();
 				PolyNode b = tree.goDownTree(v);
-				DEV.remove(b);
-				}
+				listN.remove(b);
+			}
 		}
 		return list;
 	}

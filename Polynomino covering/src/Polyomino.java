@@ -325,10 +325,7 @@ public class Polyomino {
 		}
 	}
 
-	public Polyomino addSquare(Square sq) { // adding a square and the translate so that the poly fits in the first
-											// quarter of the plan
-//		System.out.print(sq + "   ");
-//		this.print();
+	public Polyomino addSquare(Square sq) {
 		if (this.squares == null) {
 			LinkedList<Square> squares = new LinkedList<Square>();
 			squares.add(sq);
@@ -404,11 +401,11 @@ public class Polyomino {
 		return list;
 	}
 
-	public static LinkedList<Polyomino> generateFixed(int n) {
+	public static LinkedList<Polyomino> generateFixedNaive(int n) {
 		return generate(n, true);
 	}
 
-	public static LinkedList<Polyomino> generateFree(int n) {
+	public static LinkedList<Polyomino> generateFreeNaive(int n) {
 		return generate(n, false);
 	}
 

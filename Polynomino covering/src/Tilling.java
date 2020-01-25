@@ -116,13 +116,13 @@ public class Tilling extends ExactCover {
 		str[2] = figure53();
 
 		Polyomino P = new Polyomino(str[which - 1]);
-		PolyNode.n = 5;
+		PolyNode.N = 5;
 		LinkedList<Polyomino> list = PolyNode.generateFree();
 		Set<Polyomino> S = new HashSet<Polyomino>(list);
 		Tilling problem = new Tilling(P, S, true, true, false);
 		Test.size = 30;
 		Test.screen = new Dimension((P.width()) * Test.size, (P.height()) * Test.size);
-		Test.n = 5;
+		Test.N = 5;
 //		problem.preview();
 		long startTime = System.currentTimeMillis();
 //		-------------------------------------------------------------------------------------------------------------
@@ -161,10 +161,10 @@ public class Tilling extends ExactCover {
 
 	public static void test() {
 		Polyomino P = new Polyomino("[(0,0),(0,1),(0,2),(1,0),(1,1),(2,0)]");
-		PolyNode.n = 3;
+		PolyNode.N = 3;
 		Test.size = 100;
 		Test.screen = new Dimension((P.width()) * Test.size, (P.height()) * Test.size);
-		Test.n = 3;
+		Test.N = 3;
 		Set<Polyomino> l = new HashSet(PolyNode.generateFree());
 //		System.out.println(l);
 		Tilling t = new Tilling(P, l, true, true, true);
@@ -214,8 +214,8 @@ public class Tilling extends ExactCover {
 		int n = 5;
 		int width = 3;
 		int height = 20;
-		PolyNode.n = n;
-		Test.n = n;
+		PolyNode.N = n;
+		Test.N = n;
 		Test.size = 50;
 		Polyomino P = new Polyomino(rectangle(width, height));
 		Test.screen = new Dimension((P.width()) * Test.size, (P.height()) * Test.size);
@@ -285,7 +285,7 @@ public class Tilling extends ExactCover {
 				}
 				Ps.add(ppp);
 			}
-			Test.draw(Ps, "GHI/" + "(" + P.getNum() + "," + k + ")" + "_" + P.toString() + ".png");
+			Test.draw(Ps, "(" + P.getNum() + "," + k + ")" + "_" + P.toString() + ".png");
 			break;
 		}
 		if (dcl.solution.isEmpty())
@@ -295,8 +295,8 @@ public class Tilling extends ExactCover {
 	}
 
 	public static void test3(int n, int k) {
-		PolyNode.n = n;
-		Test.n = n;
+		PolyNode.N = n;
+		Test.N = n;
 		Test.size = 30;
 
 		long startTime = System.currentTimeMillis();

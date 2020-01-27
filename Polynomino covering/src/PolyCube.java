@@ -940,7 +940,7 @@ public class PolyCube {
 		System.out.println("Lattice = " + lattice);
 		System.out.println("Number of cells = " + N);
 		PolyCube P = new PolyCube("[(0,0,0)]");
-		
+
 //		generateFixed();
 //		System.out.println("Number of fixed polyominoes = " + listN.size());
 //		endTime = System.currentTimeMillis();
@@ -959,117 +959,103 @@ public class PolyCube {
 //		System.out.println("Number of free polyominoes = " + listN.size());
 	}
 
-	public static void test3() {
+	public static void test3(int which) {
 		lattice = Lattice.HEXAGON;
 
 		N = 5;
 		System.out.println("Lattice = " + lattice);
 		System.out.println("Number of cells = " + N);
 		PolyCube P = new PolyCube("[(0,0,0)]");
-		
-//		generateFixed();
-//		System.out.println("Number of fixed polyominoes = " + listN.size());
-//		endTime = System.currentTimeMillis();
-//		PolyCubeTest.draw(listN, "hexagonal_animals/" + N + "_fixed" + ".png", false);
 
-		generateFree(true, false);
-		PolyCubeTest.draw(listN, "hexagonal_animals/" + N + "_oneside" + ".png", false);
-		endTime = System.currentTimeMillis();
-		System.out.println("Number of oneside polyominoes = " + listN.size());
-
-//		generateFree(true, true);
-//		PolyCubeTest.draw(listN, "hexagonal_animals/" + N + "_free" + ".png", false);
-//		endTime = System.currentTimeMillis();
-//		System.out.println("Number of free polyominoes = " + listN.size());
+		if (which == 0) {
+			generateFixed();
+			System.out.println("Number of fixed polyominoes = " + listN.size());
+			endTime = System.currentTimeMillis();
+			PolyCubeTest.draw(listN, "hexagonal_animals/" + N + "_fixed" + ".png", false);
+		}
+		if (which == 1) {
+			generateFree(true, false);
+			PolyCubeTest.draw(listN, "hexagonal_animals/" + N + "_oneside" + ".png", false);
+			endTime = System.currentTimeMillis();
+			System.out.println("Number of oneside polyominoes = " + listN.size());
+		} else {
+			generateFree(true, true);
+			PolyCubeTest.draw(listN, "hexagonal_animals/" + N + "_free" + ".png", false);
+			endTime = System.currentTimeMillis();
+			System.out.println("Number of free polyominoes = " + listN.size());
+		}
 	}
 
-	public static void test4() {
-		startTime = System.currentTimeMillis();
+	public static void test4(int which) {
 		lattice = Lattice.TRIANGLE;
 		int l1, l2;
+		DancingLinks problem;
 
-		PolyCubeTest.size = 100;
-		N = 3;
-		l1 = 3;
-		l2 = 3;
-		PolyCube P = Triangle.parallelogram(l1, l2);
-		generateFixed();
-		DancingLinks problem = TillingPolyCube(P, listN, false, false);
-
-//		PolyCubeTest.size = 50;
-//		N = 6;
-//		l1 = 6;
-//		l2 = 6;
-//		PolyCube P = Triangle.parallelogram(l1, l2);
-//		generateFree(true, true);
-//		System.out.println(listN.size());
-//		DancingLinks problem = TillingPolyCube(P, listN, true, true);
+		if (which == 0) {
+			PolyCubeTest.size = 100;
+			PolyCubeTest.line = 5;
+			N = 3;
+			l1 = 3;
+			l2 = 3;
+			PolyCube P = Triangle.parallelogram(l1, l2);
+			generateFixed();
+			problem = TillingPolyCube(P, listN, false, false);
+		} else {
+			PolyCubeTest.size = 50;
+			PolyCubeTest.line = 3;
+			N = 6;
+			l1 = 6;
+			l2 = 6;
+			PolyCube P = Triangle.parallelogram(l1, l2);
+			generateFree(true, true);
+			System.out.println(listN.size());
+			problem = TillingPolyCube(P, listN, true, true);
+		}
 
 		problem.exactCover();
 		System.out.println("Number of tillings = " + problem.solution.size());
-		endTime = System.currentTimeMillis();
 
 		int count = 0;
 		for (Set<dataObj> tile : (Set<Set<dataObj>>) problem.solution) {
 			PolyCubeTest.draw(PolyCubeTest.drawTilling(tile),
-					"extensions/triangle/" + l1 + "," + l2 + "_" + N + "_" + (count + 1) + ".png", true);
+					"triangle_tilling/" + l1 + "," + l2 + "_" + N + "_" + (count + 1) + ".png", true);
 			count++;
 		}
 	}
 
-	public static void test5() {
+	public static void test5(int which) {
 		startTime = System.currentTimeMillis();
 		lattice = Lattice.HEXAGON;
 		int l1, l2;
-
+		DancingLinks problem;
 		PolyCubeTest.size = 50;
-//		N = 4;
-//		l1 = 16;
-//		l2 = 11;
-//		PolyCube P = Hexagon.parallelogram(l1, l2);
-//		generateFixed();
-//		System.out.println(listN.size());
-//		DancingLinks problem = TillingPolyCube(P, listN, false, false);
+		PolyCubeTest.line = 5;
 
-//		N = 4;
-//		l1 = 8;
-//		l2 = 22;
-//		PolyCube P = Hexagon.parallelogram(l1, l2);
-//		generateFixed();
-//		System.out.println(listN.size());
-//		DancingLinks problem = TillingPolyCube(P, listN, false, false);
-
-//		N = 5;
-//		l1 = 11;
-//		l2 = 10;
-//		PolyCube P = Hexagon.parallelogram(l1, l2);
-//		generateFree(true, true);
-//		System.out.println(listN.size());
-//		DancingLinks problem = TillingPolyCube(P, listN, true, true);
-
-//		N = 5;
-//		l1 = 11;
-//		l2 = 15;
-//		PolyCube P = Hexagon.parallelogram(l1, l2);
-//		generateFree(true, false);
-//		System.out.println(listN.size());
-//		DancingLinks problem = TillingPolyCube(P, listN, true, false);
-
-		N = 4;
-		generateFixed();
-		LinkedList<Cell> list = new LinkedList<Cell>();
-		for (int k = -7; k <= 8; k++)
-			for (int j = -7; j <= 7; j++)
-				for (int i = -7; i <= 7; i++)
-					if (i + j + k == 0)
-						list.add(Cell.getCell(i, j, k));
-		PolyCube P = new PolyCube(list);
-		System.out.println(P.cells.size());
-		LinkedList<PolyCube> l = new LinkedList<PolyCube>();
-		l.add(P);
-		PolyCubeTest.frame(P);
-		PolyCubeTest.draw(l, "hohoho.png", true);
-		DancingLinks problem = TillingPolyCube(P, listN, false, false);
+		if (which == 0) {
+			N = 4;
+			l1 = 16;
+			l2 = 11;
+			PolyCube P = Hexagon.parallelogram(l1, l2);
+			generateFixed();
+			System.out.println(listN.size());
+			problem = TillingPolyCube(P, listN, false, false);
+		} else if (which == 1) {
+			N = 4;
+			l1 = 8;
+			l2 = 22;
+			PolyCube P = Hexagon.parallelogram(l1, l2);
+			generateFixed();
+			System.out.println(listN.size());
+			problem = TillingPolyCube(P, listN, false, false);
+		} else {
+			N = 5;
+			l1 = 11;
+			l2 = 10;
+			PolyCube P = Hexagon.parallelogram(l1, l2);
+			generateFree(true, true);
+			System.out.println(listN.size());
+			problem = TillingPolyCube(P, listN, true, true);
+		}
 
 		problem.exactCover();
 		System.out.println("Number of tillings = " + problem.solution.size());
@@ -1079,8 +1065,8 @@ public class PolyCube {
 		for (Set<dataObj> tile : (Set<Set<dataObj>>) problem.solution) {
 
 			PolyCubeTest.draw(PolyCubeTest.drawTilling(tile),
-//					"extensions/hexagon/" + l1 + "," + l2 + "_" + N + "_" + (count + 1) + ".png",
-					"extensions/hexagon" + "hexagon_8" + (count + 1) + ".png", true);
+					"hexagon_tilling/" + l1 + "," + l2 + "_" + N + "_" + (count + 1) + ".png",
+					true);
 			count++;
 		}
 	}
@@ -1099,11 +1085,22 @@ public class PolyCube {
 //		------------------------------------------------------------------
 //		test1(); // OK
 //		test2();
-		test3();
-//		test4();
-//		test5();
+
+//		test3(0);
+//		test3(1);
+//		test3(2);
+
+//		test4(0);
+//		test4(1);
+//		test4(2);
+
+//		test5(0);
+//		test5(1);
+		test5(2);
+
 //		test();
 //		------------------------------------------------------------------
+		endTime = System.currentTimeMillis();
 		executionTime = endTime - startTime;
 		System.out.println("Execution time = " + executionTime + " ms");
 	}

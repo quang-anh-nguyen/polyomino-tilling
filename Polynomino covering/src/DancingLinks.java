@@ -17,6 +17,10 @@ class dataObj {
 		L = null;
 	}
 
+	public boolean isNull() {
+		return U == null & D == null & L == null & R == null;
+	}
+
 	public String toString() {
 		String s = "";
 		if (C.equals(this))
@@ -41,11 +45,9 @@ class dataObj {
 class colObj<E> extends dataObj {
 	int S;
 	public E N;
-	dataObj last;
 
 	public colObj() {
 		super();
-		last = this;
 		S = 0;
 	}
 
@@ -68,50 +70,41 @@ public class DancingLinks<E> extends ExactCover<E> {
 		super(groundSet, collection);
 		reference = (LinkedList) collection;
 		h = new colObj();
-		dataObj last = h;
+		h.L = h;
+		h.R = h;
 		for (E element : groundSet) {
 			colObj<E> cur = new colObj<E>(element);
+			cur.L = h.L;
 			cur.R = h;
-			last.R = cur;
-			cur.L = last;
-			h.L = cur;
+			cur.C = cur;
 			cur.U = cur;
 			cur.D = cur;
-			cur.last = cur;
-			cur.C = cur;
-			last = cur;
+			h.L.R = cur;
+			h.L = cur;
 		}
-		int k = 0;
 		for (Set<E> set : collection) {
 			dataObj first = new dataObj();
-			last = new dataObj();
 			for (colObj<E> col = (colObj<E>) h.R; !col.equals(h); col = (colObj<E>) col.R) {
 				if (set.contains(col.N)) {
 					dataObj cur = new dataObj();
-					cur.set = k;
-					if (last.R == null) {
-						cur.R = cur;
-						cur.L = cur;
-						first = cur;
-						last = cur;
+					if (first.isNull()) {
+						first.L = first;
+						first.R = first;
+						cur = first;
 					} else {
+						cur.L = first.L;
 						cur.R = first;
+						first.L.R = cur;
 						first.L = cur;
-						cur.L = last;
-						last.R = cur;
 					}
-					cur.U = col.last;
-					col.last.D = cur;
+					cur.U = col.U;
 					cur.D = col;
-					col.U = cur;
 					cur.C = col;
-					last = cur;
-					col.last = cur;
+					col.U.D = cur;
+					col.U = cur;
 					col.S++;
-
 				}
 			}
-			k++;
 		}
 	}
 
@@ -161,8 +154,8 @@ public class DancingLinks<E> extends ExactCover<E> {
 				P.add(t);
 				solution.add(P);
 			}
-////		add this to code to limit the cases for big tests 
-//			if (solution.size() >= 10)
+////	Add this to code to limit the cases for big tests 
+//			if (solution.size() >= 100)
 //				break;
 			for (dataObj y = t.R; !y.equals(t); y = y.R)
 				uncoverColumn(y.C);
@@ -179,7 +172,7 @@ public class DancingLinks<E> extends ExactCover<E> {
 
 	public static void Test1() {
 		ExactCover<Integer> ECP = new ExactCover<Integer>();
-		for (int i = 1; i <= 3; i++) {
+		for (int i = 1; i <= 7; i++) {
 			ECP.groundSet.add(i);
 		}
 		ECP.collection = new LinkedList<Set<Integer>>();
@@ -205,20 +198,20 @@ public class DancingLinks<E> extends ExactCover<E> {
 
 	public static void Test2() {
 		ExactCover ECP = new ExactCover();
-		for (int i = 1; i <= 4; i++) {
+		for (int i = 1; i <= 10; i++) {
 			ECP.groundSet.add(i);
 		}
+
+////	Choose one of below: all subsets of X or all combination k of X
 		ECP.collection.addAll(ExactCover.subsets(new HashSet<Integer>(ECP.groundSet)));
 //		ECP.collection.addAll(ExactCover.subsetsK(new HashSet<Integer>(ECP.groundSet), 2));
-//		System.out.println(ECP.collection);
 
-		// Randomly removing half of the subsets;
+////	Randomly removing half of the subsets;
 //		Random r = new Random();
 //		int number = ECP.collection.size();
 //		for (int i = 0; i < number/2; i++)
 //			ECP.collection.remove(r.nextInt((number - i)));
 
-//		ECP.Matrix();
 		ECP.printX();
 //		ECP.printC();
 
@@ -240,6 +233,6 @@ public class DancingLinks<E> extends ExactCover<E> {
 
 	public static void main(String[] args) {
 //		Test1();
-		Test2();
+//		Test2();
 	}
 }

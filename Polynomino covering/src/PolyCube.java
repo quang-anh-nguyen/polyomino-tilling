@@ -24,41 +24,36 @@ class PolyCubeTest {
 		return Color.getHSBColor(h, 1, 1);
 	}
 
-	public static void getDimension(int length) {
-		if (length > 10000)
-			size = 20;
-		if (length > 50000)
-			size = 10;
-		int nx, ny;
-		if (size * length * (N + 2) < screen.width)
-			screen = new Dimension(size * length * (N + 2), size * (N + 2));
-		nx = screen.width / (size * (N + 2));
-		ny = (int) Math.ceil((length + 0.0) / nx);
-		screen = new Dimension(nx * size * (N + 2), ny * size * (N + 2));
-	}
-
 	public static void draw(LinkedList<PolyCube> polys, String filename, boolean real) {
 		int c = 1;
-		int left = (N + 2) * size / 2;
-		int floor = (N + 2) * size / 2;
+		int left, floor;
 		if (real) {
 			floor = -YMIN;
 			left = -XMIN;
 			screen.width = XMAX - XMIN + 1;
 			screen.height = YMAX - YMIN + 1;
-		} else
-			getDimension(polys.size());
+		} else {
+			left = size;
+			floor = size;
+			screen.height = (N + 1) * size;
+			screen.width = N * size;
+		}
 		Image2d img = new Image2d(screen.width, screen.height);
 		for (PolyCube P : polys) {
+			int[] lim = PolyCubeTest.limits(P);
 			P.addToImage(img, line, size, color[c], real, left, floor);
 			c++;
 			c = c % color.length;
 			if (!real) {
-				left += (N + 2) * size;
-				if (left > PolyCubeTest.screen.width - size) {
-					left = (N + 2) * size / 2;
-					floor += (N + 2) * size;
+				left += lim[1] - lim[0] + size;
+				if (left > 10000) {
+					floor += (N + 1) * size;
+					screen.height += (N + 1) * size;
+					img.height += (N + 1) * size;
+					left = size;
 				}
+				screen.width = Math.max(left + size * N, screen.width);
+				img.width = screen.width;
 			}
 		}
 		Image2dComponent imgcom = new Image2dComponent(img);
@@ -103,17 +98,26 @@ class PolyCubeTest {
 		return m;
 	}
 
-	public static void frame(PolyCube P) {
-		XMIN = Cell.MAX * size;
-		XMAX = -Cell.MAX * size;
-		YMIN = Cell.MAX * size;
-		YMAX = -Cell.MAX * size;
+	public static int[] limits(PolyCube P) {
+		int xmin = Cell.MAX * size;
+		int xmax = -Cell.MAX * size;
+		int ymin = Cell.MAX * size;
+		int ymax = -Cell.MAX * size;
 		for (Cell c : P.cells) {
-			XMIN = Math.min(XMIN, min(c.getGeometry(0, 0, size)[0]));
-			XMAX = Math.max(XMAX, max(c.getGeometry(0, 0, size)[0]));
-			YMIN = Math.min(YMIN, min(c.getGeometry(0, 0, size)[1]));
-			YMAX = Math.max(YMAX, max(c.getGeometry(0, 0, size)[1]));
+			xmin = Math.min(xmin, min(c.getGeometry(0, 0, size)[0]));
+			xmax = Math.max(xmax, max(c.getGeometry(0, 0, size)[0]));
+			ymin = Math.min(ymin, min(c.getGeometry(0, 0, size)[1]));
+			ymax = Math.max(ymax, max(c.getGeometry(0, 0, size)[1]));
 		}
+		return new int[] { xmin, xmax, ymin, ymax };
+	}
+
+	public static void frame(PolyCube P) {
+		int[] lim = limits(P);
+		XMIN = lim[0];
+		XMAX = lim[1];
+		YMIN = lim[2];
+		YMAX = lim[3];
 	}
 }
 
@@ -535,7 +539,13 @@ public class PolyCube {
 
 	public void addToImage(Image2d img, int width, int size, Color color, boolean real, int left, int floor) {
 		for (Cell c : cells) {
-			int[][] coords = c.getGeometry(left, floor, size);
+			int[] lim = new int[4];
+			if (!real) {
+				lim = PolyCubeTest.limits(this);
+			} else {
+				lim = new int[] { 0,0,0,0 };
+			}
+			int[][] coords = c.getGeometry(left - lim[0], floor - lim[2], size);
 			img.addPolygon(coords[0], coords[1], color);
 			for (int vertex = 0; vertex < coords[0].length; vertex++) {
 				if (c.neighbors().get(vertex).inList(cells) < 0)
@@ -858,18 +868,6 @@ public class PolyCube {
 	}
 
 	public boolean includes(PolyCube P) {
-//		P.makeTiles();
-//		makeTiles();
-//		if (P.xmin < xmin || P.xmax > xmax || P.ymin < ymin || P.ymax > ymax || P.zmin < zmin || P.zmax > zmax)
-//			return false;
-//		for (int x = P.xmin; x <= P.xmax; x++) {
-//			for (int y = P.ymin; y <= P.ymax; y++) {
-//				for (int z = P.zmin; z <= P.zmax; z++) {
-//					if (P.tiles[x - P.xmin][y - P.ymin][z - P.zmin] & !tiles[x - xmin][y - ymin][z - zmin])
-//						return false;
-//				}
-//			}
-//		}
 		for (Cell c : P.cells)
 			if (c.inList(cells) < 0)
 				return false;
@@ -933,30 +931,34 @@ public class PolyCube {
 //		System.out.println(solution.size());
 	}
 
-	public static void test2() {
+	public static void test2(int which) {
 		lattice = Lattice.TRIANGLE;
 
-		N = 10;
+		N = 1;
 		System.out.println("Lattice = " + lattice);
 		System.out.println("Number of cells = " + N);
 		PolyCube P = new PolyCube("[(0,0,0)]");
+		PolyCubeTest.size = 50;
+		PolyCubeTest.line = 2;
 
-//		generateFixed();
-//		System.out.println("Number of fixed polyominoes = " + listN.size());
-//		endTime = System.currentTimeMillis();
-//		PolyCubeTest.draw(listN, "triangular_animals/" + N + "_fixed" + ".png", false);
-
-//		listN = null;
-//		generateFree(true, false);
-//		PolyCubeTest.draw(listN, "triangular_animals/" + N + "_oneside" + ".png", false);
-//		endTime = System.currentTimeMillis();
-//		System.out.println("Number of oneside polyominoes = " + listN.size());
-
-//		listN = null;
-//		generateFree(true, true);
-//		PolyCubeTest.draw(listN, "triangular_animals/" + N + "_free" + ".png", false);
-//		endTime = System.currentTimeMillis();
-//		System.out.println("Number of free polyominoes = " + listN.size());
+		if (which == 0) {
+			generateFixed();
+			System.out.println("Number of fixed polyominoes = " + listN.size());
+			endTime = System.currentTimeMillis();
+			PolyCubeTest.draw(listN, "triangular_animals/" + N + "_fixed" + ".png", false);
+		} else if (which == 1) {
+			listN = null;
+			generateFree(true, false);
+			PolyCubeTest.draw(listN, "triangular_animals/" + N + "_oneside" + ".png", false);
+			endTime = System.currentTimeMillis();
+			System.out.println("Number of oneside polyominoes = " + listN.size());
+		} else {
+			listN = null;
+			generateFree(true, true);
+			PolyCubeTest.draw(listN, "triangular_animals/" + N + "_free" + ".png", false);
+			endTime = System.currentTimeMillis();
+			System.out.println("Number of free polyominoes = " + listN.size());
+		}
 	}
 
 	public static void test3(int which) {
@@ -965,15 +967,15 @@ public class PolyCube {
 		N = 5;
 		System.out.println("Lattice = " + lattice);
 		System.out.println("Number of cells = " + N);
-		PolyCube P = new PolyCube("[(0,0,0)]");
+		PolyCubeTest.size = 50;
+		PolyCubeTest.line = 2;
 
 		if (which == 0) {
 			generateFixed();
 			System.out.println("Number of fixed polyominoes = " + listN.size());
 			endTime = System.currentTimeMillis();
 			PolyCubeTest.draw(listN, "hexagonal_animals/" + N + "_fixed" + ".png", false);
-		}
-		if (which == 1) {
+		} else if (which == 1) {
 			generateFree(true, false);
 			PolyCubeTest.draw(listN, "hexagonal_animals/" + N + "_oneside" + ".png", false);
 			endTime = System.currentTimeMillis();
@@ -984,6 +986,20 @@ public class PolyCube {
 			endTime = System.currentTimeMillis();
 			System.out.println("Number of free polyominoes = " + listN.size());
 		}
+	}
+	
+	public static PolyCube snowflake() {
+		lattice = Lattice.TRIANGLE;
+		return new PolyCube("[(1,0,0),(0,0,0),(0,1,0),"
+				+ "(3,-1,-1),(2,-1,-1),(2,0,-1),(1,0,-1),(1,1,-1),(0,1,-1),(0,2,-1),(-1,2,-1),(-1,3,-1),"
+				+ "(5,-2,-2),(4,-2,-2),(4,-1,-2),(3,-1,-2),(3,0,-2),(2,0,-2),(2,1,-2),(1,1,-2),(1,2,-2),(0,2,-2),(0,3,-2),(-1,3,-2),(-1,4,-2),(-2,4,-2),(-2,5,-2)"
+				+ "(5,-2,-3),(5,-1,-3),(4,-1,-3),(4,0,-3),(3,0,-3),(3,1,-3),(2,1,-3),(2,2,-3),(1,2,-3),(1,3,-3),(0,3,-3),(0,4,-3),(-1,4,-3),(-1,5,-3),(-2,5,-3)"
+				+ "(6,-1,-4),(5,-1,-4),(5,0,-4),(4,0,-4),(4,1,-4),(3,1,-4),(3,2,-4),(2,2,-4),(2,3,-4),(1,3,-4),(1,4,-4),(0,4,-4),(0,5,-4),(-1,5,-4),(-1,6,-4)"
+				+ " (6,-1,-5),(6,0,-5),(5,0,-5),(5,1,-5),(4,1,-5),(4,2,-5),(3,2,-5),(3,3,-5),(2,3,-5),(2,4,-5),(1,4,-5),(1,5,-5),(0,5,-5),(0,6,-5)(-1,6,-5)"
+				+ " (7,0,-6),(6,0,-6),(6,1,-6),(5,1,-6),(5,2,-6),(4,2,-6),(4,3,-6),(3,3,-6),(3,4,-6),(2,4,-6),(2,5,-6),(1,5,-6),(1,6,-6),(0,6,-6),(0,7,-6)"
+				+ " (7,0,-7),(7,1,-7),(6,1,-7),(6,2,-7),(5,2,-7),(5,3,-7),(4,3,-7),(4,4,-7),(3,4,-7),(3,5,-7),(2,5,-7),(2,6,-7),(1,6,-7),(1,7,-7),(0,7,-7)"
+				+ " (6,2,-8),(6,3,-8),(5,3,-8),(5,4,-8),(4,4,-8),(4,5,-8),(3,5,-8),(3,6,-8),(2,6,-8)"
+				+ " (5,4,-9),(5,5,-9),(4,5,-9)]");
 	}
 
 	public static void test4(int which) {
@@ -1000,7 +1016,7 @@ public class PolyCube {
 			PolyCube P = Triangle.parallelogram(l1, l2);
 			generateFixed();
 			problem = TillingPolyCube(P, listN, false, false);
-		} else {
+		} else if (which == 1) {
 			PolyCubeTest.size = 50;
 			PolyCubeTest.line = 3;
 			N = 6;
@@ -1010,6 +1026,14 @@ public class PolyCube {
 			generateFree(true, true);
 			System.out.println(listN.size());
 			problem = TillingPolyCube(P, listN, true, true);
+		} else {
+			PolyCubeTest.size = 50;
+			PolyCubeTest.line = 2;
+			N = 6;
+			PolyCube P = snowflake();
+			generateFree(true, false);
+			System.out.println(listN.size());
+			problem = TillingPolyCube(P, listN, true, false);
 		}
 
 		problem.exactCover();
@@ -1018,7 +1042,8 @@ public class PolyCube {
 		int count = 0;
 		for (Set<dataObj> tile : (Set<Set<dataObj>>) problem.solution) {
 			PolyCubeTest.draw(PolyCubeTest.drawTilling(tile),
-					"triangle_tilling/" + l1 + "," + l2 + "_" + N + "_" + (count + 1) + ".png", true);
+//					"triangle_tilling/" + l1 + "," + l2 + "_" + N + "_" + (count + 1) + ".png", true);
+					"triangle_tilling/snow_" + (count + 1) + ".png", true);
 			count++;
 		}
 	}
@@ -1039,15 +1064,8 @@ public class PolyCube {
 			generateFixed();
 			System.out.println(listN.size());
 			problem = TillingPolyCube(P, listN, false, false);
+
 		} else if (which == 1) {
-			N = 4;
-			l1 = 8;
-			l2 = 22;
-			PolyCube P = Hexagon.parallelogram(l1, l2);
-			generateFixed();
-			System.out.println(listN.size());
-			problem = TillingPolyCube(P, listN, false, false);
-		} else {
 			N = 5;
 			l1 = 11;
 			l2 = 10;
@@ -1055,6 +1073,14 @@ public class PolyCube {
 			generateFree(true, true);
 			System.out.println(listN.size());
 			problem = TillingPolyCube(P, listN, true, true);
+		} else {
+			N = 4;
+			l1 = 8;
+			l2 = 22;
+			PolyCube P = Hexagon.parallelogram(l1, l2);
+			generateFixed();
+			System.out.println(listN.size());
+			problem = TillingPolyCube(P, listN, false, false);
 		}
 
 		problem.exactCover();
@@ -1065,8 +1091,7 @@ public class PolyCube {
 		for (Set<dataObj> tile : (Set<Set<dataObj>>) problem.solution) {
 
 			PolyCubeTest.draw(PolyCubeTest.drawTilling(tile),
-					"hexagon_tilling/" + l1 + "," + l2 + "_" + N + "_" + (count + 1) + ".png",
-					true);
+					"hexagon_tilling/" + l1 + "," + l2 + "_" + N + "_" + (count + 1) + ".png", true);
 			count++;
 		}
 	}
@@ -1086,17 +1111,21 @@ public class PolyCube {
 //		test1(); // OK
 //		test2();
 
+//		test2(0);
+//		test2(1);
+//		test2(2);
+
 //		test3(0);
 //		test3(1);
 //		test3(2);
 
 //		test4(0);
 //		test4(1);
-//		test4(2);
+		test4(2);
 
 //		test5(0);
 //		test5(1);
-		test5(2);
+//		test5(2);
 
 //		test();
 //		------------------------------------------------------------------

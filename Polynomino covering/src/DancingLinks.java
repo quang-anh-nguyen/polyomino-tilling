@@ -20,30 +20,10 @@ class dataObj {
 	public boolean isNull() {
 		return U == null & D == null & L == null & R == null;
 	}
-
-	public String toString() {
-		String s = "";
-		if (C.equals(this))
-			return "Element " + C.N.toString() + " contained in " + C.S;
-//		s += "Element " + C.N.toString() + " in [";
-		s += "[";
-		dataObj cur = this;
-		while (true) {
-			s += cur.C.N.toString();
-			cur = cur.R;
-			if (cur.equals(this))
-				break;
-			else
-				s += ", ";
-		}
-		s += "]";
-//		s += " contained by " + C.S;
-		return s;
-	}
 }
 
 class colObj<E> extends dataObj {
-	int S;
+	public int S;
 	public E N;
 
 	public colObj() {
@@ -132,6 +112,7 @@ public class DancingLinks<E> extends ExactCover<E> {
 	}
 
 	public Set<Set<dataObj>> solution = new HashSet<Set<dataObj>>();
+	static Random r = new Random();
 
 	public void exactCover() {
 		if (h.R.equals(h)) {
@@ -145,6 +126,13 @@ public class DancingLinks<E> extends ExactCover<E> {
 			}
 		coverColumn(x);
 		for (dataObj t = x.U; !t.equals(x); t = t.U) {
+////	Add this to code to limit the cases for big tests 
+//			if (solution.size() >= 500) {
+//				break;
+//				}
+////	or this for more randomness in choosing a tile to cover x
+			if (r.nextFloat() >= 0.7)
+				continue;
 			for (dataObj y = t.L; !y.equals(t); y = y.L) {
 				coverColumn(y.C);
 			}
@@ -154,9 +142,7 @@ public class DancingLinks<E> extends ExactCover<E> {
 				P.add(t);
 				solution.add(P);
 			}
-////	Add this to code to limit the cases for big tests 
-//			if (solution.size() >= 100)
-//				break;
+
 			for (dataObj y = t.R; !y.equals(t); y = y.R)
 				uncoverColumn(y.C);
 		}

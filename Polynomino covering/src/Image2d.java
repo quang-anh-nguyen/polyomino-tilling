@@ -36,8 +36,8 @@ class Edge {
 
 // Manipulation for images
 public class Image2d {
-	private int width; // width of the image
-	private int height; // height of the image
+	public int width; // width of the image
+	public int height; // height of the image
 	private java.util.List<ColoredPolygon> coloredPolygons; // colored polygons in the image
 	private java.util.List<Edge> edges; // edges to add to separate polygons
 

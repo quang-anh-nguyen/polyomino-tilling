@@ -9,7 +9,7 @@ public class Test {
 	static int size = 20;
 	static Dimension screen = new Dimension(1920, 1080);
 
-	public static Color[] color = { Color.white, Color.red, Color.green, Color.blue, Color.yellow, Color.cyan,
+	public static Color[] color = { Color.red, Color.green, Color.blue, Color.yellow, Color.cyan,
 			Color.magenta, Color.orange, Color.gray, Color.pink, Color.darkGray, Color.lightGray };
 
 	public static void getDimension(int length) {
@@ -44,8 +44,8 @@ public class Test {
 		imgcom.saveImage("results/" + filename, width, height);
 	}
 
-	public static void demo(LinkedList<Polyomino> polys, String filename) {
-		getDimension(polys.size());
+	public static void demo(LinkedList<? extends Polyomino> polys, String filename) {
+//		getDimension(polys.size());
 		int width = screen.width;
 		int height = screen.height;
 		Image2d img = new Image2d(width, height);
@@ -65,7 +65,7 @@ public class Test {
 		Image2dComponent imgcom = new Image2dComponent(img);
 		Image2dViewer imgvr = new Image2dViewer(img);
 		imgvr.getContentPane().add(imgcom);
-		imgcom.saveImage("results/" + filename, width, height);
+		imgcom.saveImage("results/generating" + filename, width, height);
 	}
 
 	public static void test1() {
@@ -98,17 +98,16 @@ public class Test {
 	}
 
 	public static void test3() {
-//		String filename = "Redelmeier_" + Integer.toString(n) + "_fixed" + ".png";
-//		String filename = "Redelmeier_" + Integer.toString(n) + "_free" + ".png";
-		String filename = "hahaha.png";
+//		String filename = "Redelmeier_" + Integer.toString(N) + "_fixed" + ".png";
+//		String filename = "Redelmeier_" + Integer.toString(N) + "_free" + ".png";
 
 		long startTime = System.currentTimeMillis();
 
 //		STARTING PROGRAM ---------------------------------------------------------------------------
 		PolyNode.N = N;
 
-//		LinkedList<Polyomino> list = PolyNode.generateFixed();
-		LinkedList<Polyomino> list = PolyNode.generateFree();
+		LinkedList<? extends Polyomino> list = PolyNode.generateFixed();
+//		LinkedList<? extends Polyomino> list = PolyNode.generateFree();
 
 //		ENDING PROGRAM ---------------------------------------------------------------------------
 
@@ -125,11 +124,11 @@ public class Test {
 	}
 
 	public static void main(String[] args) {
-		N = 9;
+		N = 12;
 		System.out.println("Number of cells = " + N);
 //		test1();  	//YES
 //		test2();	//YES
-		test3();	//YES
+//		test3();	//YES
 		System.out.println("Done!!!...");
 	}
 }

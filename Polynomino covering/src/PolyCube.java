@@ -214,17 +214,17 @@ abstract class Cell {
 				transformationCode[i + 24][1] = block[i][1];
 				transformationCode[i + 24][2] = -block[i][2];
 
-				transformationCode[i + 24][0] = -block[i][0];
-				transformationCode[i + 24][1] = block[i][1];
-				transformationCode[i + 24][2] = -block[i][2];
-
-				transformationCode[i + 30][0] = block[i][0];
-				transformationCode[i + 30][1] = -block[i][1];
+				transformationCode[i + 30][0] = -block[i][0];
+				transformationCode[i + 30][1] = block[i][1];
 				transformationCode[i + 30][2] = -block[i][2];
 
-				transformationCode[i + 18][0] = -block[i][0];
-				transformationCode[i + 18][1] = -block[i][1];
-				transformationCode[i + 18][2] = -block[i][2];
+				transformationCode[i + 36][0] = block[i][0];
+				transformationCode[i + 36][1] = -block[i][1];
+				transformationCode[i + 36][2] = -block[i][2];
+
+				transformationCode[i + 42][0] = -block[i][0];
+				transformationCode[i + 42][1] = -block[i][1];
+				transformationCode[i + 42][2] = -block[i][2];
 			}
 			return;
 		}
@@ -543,7 +543,7 @@ public class PolyCube {
 			if (!real) {
 				lim = PolyCubeTest.limits(this);
 			} else {
-				lim = new int[] { 0,0,0,0 };
+				lim = new int[] { 0, 0, 0, 0 };
 			}
 			int[][] coords = c.getGeometry(left - lim[0], floor - lim[2], size);
 			img.addPolygon(coords[0], coords[1], color);
@@ -901,8 +901,8 @@ public class PolyCube {
 	}
 
 	public static DancingLinks TillingPolyCube(PolyCube P, LinkedList<PolyCube> polys, boolean rotate, boolean flip) {
-
-		PolyCubeTest.frame(P);
+		if (lattice != Lattice.CUBE)
+			PolyCubeTest.frame(P);
 		LinkedList groundSet = new LinkedList(P.cells);
 		groundSet.addAll(polys); // for tilling without repeating
 
@@ -917,24 +917,27 @@ public class PolyCube {
 
 	public static void test1() {
 		lattice = Lattice.CUBE;
-//		N = 4;
-//		PolyCube P = box(2, 2, 7);
-//		generateFree();
+		N = 4;
+		PolyCube P = box(2, 2, 7);
+		generateFree(true, true);
 
-		N = 7;
+//		N = 7;
 //		PolyCube P = new PolyCube("[(0,0,0),(0,1,0),(0,2,0),(1,0,0),(1,1,0),(2,0,0)]");
 //		generateFixed();
-		System.out.println(listN.size());
+		
+//		N = 8;
+//		generateFree(true, true);
+//		System.out.println("Number of tilings = " + listN.size());
 
-//		DancingLinks problem = TillingPolyCube(P, listN);
-//		solution = problem.exactCover();
-//		System.out.println(solution.size());
+		DancingLinks problem = TillingPolyCube(P, listN, true, true);
+		problem.exactCover();
+		System.out.println(problem.solution.size());
 	}
 
 	public static void test2(int which) {
 		lattice = Lattice.TRIANGLE;
 
-		N = 1;
+		N = 9;
 		System.out.println("Lattice = " + lattice);
 		System.out.println("Number of cells = " + N);
 		PolyCube P = new PolyCube("[(0,0,0)]");
@@ -964,7 +967,7 @@ public class PolyCube {
 	public static void test3(int which) {
 		lattice = Lattice.HEXAGON;
 
-		N = 5;
+		N = 9;
 		System.out.println("Lattice = " + lattice);
 		System.out.println("Number of cells = " + N);
 		PolyCubeTest.size = 50;
@@ -974,20 +977,20 @@ public class PolyCube {
 			generateFixed();
 			System.out.println("Number of fixed polyominoes = " + listN.size());
 			endTime = System.currentTimeMillis();
-			PolyCubeTest.draw(listN, "hexagonal_animals/" + N + "_fixed" + ".png", false);
+//			PolyCubeTest.draw(listN, "hexagonal_animals/" + N + "_fixed" + ".png", false);
 		} else if (which == 1) {
 			generateFree(true, false);
-			PolyCubeTest.draw(listN, "hexagonal_animals/" + N + "_oneside" + ".png", false);
+//			PolyCubeTest.draw(listN, "hexagonal_animals/" + N + "_oneside" + ".png", false);
 			endTime = System.currentTimeMillis();
 			System.out.println("Number of oneside polyominoes = " + listN.size());
 		} else {
 			generateFree(true, true);
-			PolyCubeTest.draw(listN, "hexagonal_animals/" + N + "_free" + ".png", false);
+//			PolyCubeTest.draw(listN, "hexagonal_animals/" + N + "_free" + ".png", false);
 			endTime = System.currentTimeMillis();
 			System.out.println("Number of free polyominoes = " + listN.size());
 		}
 	}
-	
+
 	public static PolyCube snowflake() {
 		lattice = Lattice.TRIANGLE;
 		return new PolyCube("[(1,0,0),(0,0,0),(0,1,0),"
@@ -1074,13 +1077,13 @@ public class PolyCube {
 			System.out.println(listN.size());
 			problem = TillingPolyCube(P, listN, true, true);
 		} else {
-			N = 4;
-			l1 = 8;
-			l2 = 22;
+			N = 5;
+			l1 = 11;
+			l2 = 15;
 			PolyCube P = Hexagon.parallelogram(l1, l2);
-			generateFixed();
+			generateFree(true, false);
 			System.out.println(listN.size());
-			problem = TillingPolyCube(P, listN, false, false);
+			problem = TillingPolyCube(P, listN, true, false);
 		}
 
 		problem.exactCover();
@@ -1098,8 +1101,8 @@ public class PolyCube {
 
 	public static void test() {
 		lattice = Lattice.TRIANGLE;
-		N = 4;
-		generateFree(true, true);
+		N = 1;
+		generateFree(true, false);
 		System.out.println(listN.size());
 	}
 
@@ -1121,11 +1124,11 @@ public class PolyCube {
 
 //		test4(0);
 //		test4(1);
-		test4(2);
+//		test4(2);
 
 //		test5(0);
 //		test5(1);
-//		test5(2);
+		test5(2);
 
 //		test();
 //		------------------------------------------------------------------

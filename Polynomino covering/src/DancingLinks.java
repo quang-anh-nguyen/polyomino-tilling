@@ -127,12 +127,9 @@ public class DancingLinks<E> extends ExactCover<E> {
 		coverColumn(x);
 		for (dataObj t = x.U; !t.equals(x); t = t.U) {
 ////	Add this to code to limit the cases for big tests 
-//			if (solution.size() >= 500) {
-//				break;
-//				}
-////	or this for more randomness in choosing a tile to cover x
-			if (r.nextFloat() >= 0.7)
-				continue;
+			if (solution.size() >= 200) {
+				break;
+				}
 			for (dataObj y = t.L; !y.equals(t); y = y.L) {
 				coverColumn(y.C);
 			}

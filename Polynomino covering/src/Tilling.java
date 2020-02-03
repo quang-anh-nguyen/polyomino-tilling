@@ -108,7 +108,7 @@ public class Tilling extends ExactCover {
 		s += "]";
 		return s;
 	}
-
+	
 	public static void test1(int which) {
 		String str[] = new String[3];
 		str[0] = figure51();
@@ -159,45 +159,6 @@ public class Tilling extends ExactCover {
 
 	}
 
-	public static void test() {
-		Polyomino P = new Polyomino("[(0,0),(0,1),(0,2),(1,0),(1,1),(2,0)]");
-		PolyNode.N = 3;
-		Test.size = 100;
-		Test.screen = new Dimension((P.width()) * Test.size, (P.height()) * Test.size);
-		Test.N = 3;
-		Set<Polyomino> l = new HashSet(PolyNode.generateFree());
-//		System.out.println(l);
-		Tilling t = new Tilling(P, l, true, true, true);
-		System.out.println(t.collection.size());
-//		t.preview();
-
-		DancingLinks<Object> dcl = new DancingLinks(t.groundSet, t.collection);
-		dcl.exactCover();
-		
-		int c = 0;
-		System.out.println(dcl.solution.size());
-		for (Set<dataObj> sol : dcl.solution) {
-			LinkedList<Polyomino> Ps = new LinkedList<Polyomino>();
-			Ps.add(P);
-			for (dataObj o : sol) {
-				dataObj cur = o;
-				Polyomino ppp = new Polyomino();
-				while (true) {
-					if (cur.C.N instanceof Square) {
-						ppp = ppp.addSquare((Square) cur.C.N);
-					}
-					cur = cur.R;
-					if (cur.equals(o))
-						break;
-				}
-				Ps.add(ppp);
-			}
-			c++;
-			Test.draw(Ps, "" + Integer.toString(c) + ".png");
-		}
-
-	}
-
 	public static String rectangle(int width, int height) {
 		String s = "[";
 		for (int i = 0; i < width; i++)
@@ -211,19 +172,19 @@ public class Tilling extends ExactCover {
 	}
 
 	public static void test2() {
-		int n = 5;
-		int width = 4;
-		int height = 15;
+		int n = 4;
+		int width = 10;
+		int height = 2;
 		PolyNode.N = n;
 		Test.N = n;
 		Test.size = 50;
 		Polyomino P = new Polyomino(rectangle(width, height));
 		Test.screen = new Dimension((P.width()) * Test.size, (P.height()) * Test.size);
 
-//		Set<Polyomino> list = new HashSet<Polyomino>(PolyNode.generateFixed());
-		Set<Polyomino> list = new HashSet<Polyomino>(PolyNode.generateFree());
+		Set<Polyomino> list = new HashSet<Polyomino>(PolyNode.generateFixed());
+//		Set<Polyomino> list = new HashSet<Polyomino>(PolyNode.generateFree());
 
-		Tilling problem = new Tilling(P, list, true, true, false); // modify here
+		Tilling problem = new Tilling(P, list, false, false, true); // modify here
 
 		long startTime = System.currentTimeMillis();
 //		-------------------------------------------------------------------------------------------------------------
@@ -318,7 +279,7 @@ public class Tilling extends ExactCover {
 //		test1(1);
 //		test1(2);
 //		test1(3);
-//		test2();
+		test2();
 //		test3(8, 4);
 	}
 }

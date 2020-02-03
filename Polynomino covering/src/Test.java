@@ -69,7 +69,7 @@ public class Test {
 	}
 
 	public static void test1() {
-		draw(Polyomino.PolyominoList("polyominoesINF421.txt"), "INF421");
+		demo(Polyomino.PolyominoList("polyominoesINF421.txt"), "INF421.png");
 	}
 
 	public static void test2() {
@@ -124,9 +124,9 @@ public class Test {
 	}
 
 	public static void main(String[] args) {
-		N = 12;
+		N = 4;
 		System.out.println("Number of cells = " + N);
-//		test1();  	//YES
+		test1();  	//YES
 //		test2();	//YES
 //		test3();	//YES
 		System.out.println("Done!!!...");

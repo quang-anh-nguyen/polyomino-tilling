@@ -301,7 +301,7 @@ public class Polyomino {
 			if (!P.contains(new Square(sq.x, sq.y - 1)))
 				img.addEdge(offsetX + sq.x * size, offsetY - sq.y * size, offsetX + (sq.x + 1) * size,
 						offsetY - sq.y * size, width);
-			c++;
+//			c++;
 		}
 	}
 

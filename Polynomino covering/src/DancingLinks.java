@@ -165,7 +165,6 @@ public class DancingLinks<E> extends ExactCover<E> {
 		ECP.collection.add(new HashSet<Integer>(Arrays.asList(new Integer[] { 1, 4 })));
 		ECP.collection.add(new HashSet<Integer>(Arrays.asList(new Integer[] { 2, 7 })));
 		ECP.collection.add(new HashSet<Integer>(Arrays.asList(new Integer[] { 4, 5, 7 })));
-		ECP.collection.add(new HashSet<Integer>(Arrays.asList(new Integer[] { 1 }))); // additional
 
 		long startTime = System.currentTimeMillis();
 //		---------------------------------------------------------------------------------------

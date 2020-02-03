@@ -65,7 +65,7 @@ public class Test {
 		Image2dComponent imgcom = new Image2dComponent(img);
 		Image2dViewer imgvr = new Image2dViewer(img);
 		imgvr.getContentPane().add(imgcom);
-		imgcom.saveImage("results/generating" + filename, width, height);
+		imgcom.saveImage("results/generating/" + filename, width, height);
 	}
 
 	public static void test1() {
